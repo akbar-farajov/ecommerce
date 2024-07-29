@@ -1,10 +1,9 @@
 "use client";
 
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import React from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-function Filter() {
-  const pathName = usePathname();
+const Filter = () => {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
 
@@ -14,12 +13,12 @@ function Filter() {
     const { name, value } = e.target;
     const params = new URLSearchParams(searchParams);
     params.set(name, value);
-    replace(`${pathName}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`);
   };
 
   return (
     <div className="mt-12 flex justify-between">
-      <div className="flex flex-wrap gap-6">
+      <div className="flex gap-6 flex-wrap">
         <select
           name="type"
           id=""
@@ -78,6 +77,6 @@ function Filter() {
       </div>
     </div>
   );
-}
+};
 
 export default Filter;

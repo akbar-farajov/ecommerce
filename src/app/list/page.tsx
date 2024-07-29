@@ -8,7 +8,7 @@ async function ListPage({ searchParams }: { searchParams: any }) {
   const wixClient = await wixClientServer();
 
   const category = await wixClient.collections.getCollectionBySlug(
-    searchParams.cat || "all-product"
+    searchParams.cat || "all-products"
   );
 
   return (

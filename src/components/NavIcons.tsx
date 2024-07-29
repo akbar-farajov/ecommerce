@@ -2,25 +2,54 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import CartModal from "./CartModal";
+import { useWixClient } from "../../hooks/useWixClient";
+import Cookies from "js-cookie";
 
 function NavIcons() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const wixClient = useWixClient();
   const router = useRouter();
+  const pathName = usePathname();
 
-  //   Temporary
-  const isLoggedIn = true;
+  const isLoggedIn = wixClient.auth.loggedIn();
 
   const handleProfile = () => {
     if (!isLoggedIn) {
       router.push("/login");
+    } else {
+      setIsProfileOpen((prev) => !prev);
     }
+  };
 
-    setIsProfileOpen((prev) => !prev);
+  // const wixClient = useWixClient();
+
+  // const login = async () => {
+  //   const loginRequestData = wixClient.auth.generateOAuthData(
+  //     "http://localhost:3000"
+  //   );
+
+  //   console.log(loginRequestData);
+
+  //   localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequestData));
+
+  //   const { authUrl } = await wixClient.auth.getAuthUrl(loginRequestData);
+  //   window.location.href = authUrl;
+  // };
+
+  const handleLogOut = async () => {
+    setIsLoading(true);
+    Cookies.remove("refreshToken");
+
+    const { logoutUrl } = await wixClient.auth.logout(window.location.href);
+    setIsLoading(false);
+    setIsProfileOpen(false);
+    router.push(logoutUrl);
   };
 
   return (
@@ -36,7 +65,9 @@ function NavIcons() {
       {isProfileOpen && (
         <div className="absolute p-4 rounded-md top-12 left-0 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 bg-white">
           <Link href="/">Profile</Link>
-          <div className="mt-2 cursor-pointer">Logout</div>
+          <div className="mt-2 cursor-pointer" onClick={handleLogOut}>
+            {isLoading ? "Logging out" : "Logout"}
+          </div>
         </div>
       )}
       <Image
