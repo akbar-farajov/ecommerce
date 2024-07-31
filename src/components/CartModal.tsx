@@ -8,6 +8,7 @@ import { useWixClient } from "../../hooks/useWixClient";
 function CartModal() {
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem } = useCartStore();
+  const isLoggedIn = wixClient.auth.loggedIn();
 
   // Calculate the subtotal manually
   const subtotal = cart.lineItems?.reduce((total, item) => {
@@ -16,7 +17,7 @@ function CartModal() {
 
   return (
     <div className="w-max absolute top-12 right-0 flex flex-col gap-6 p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 bg-white">
-      {isLoading ? (
+      {isLoading && isLoggedIn ? (
         "Loading..."
       ) : !cart.lineItems ? (
         <div>Cart is empty</div>

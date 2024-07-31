@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartModal from "./CartModal";
 import { useWixClient } from "../../hooks/useWixClient";
@@ -16,7 +16,6 @@ function NavIcons() {
 
   const wixClient = useWixClient();
   const router = useRouter();
-  const pathName = usePathname();
 
   const isLoggedIn = wixClient.auth.loggedIn();
 
@@ -56,8 +55,8 @@ function NavIcons() {
   const { cart, counter, getCart } = useCartStore();
 
   useEffect(() => {
-    getCart(wixClient);
-  }, [wixClient, getCart]);
+    isLoggedIn && getCart(wixClient);
+  }, [wixClient, getCart, isLoggedIn]);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">

@@ -1,6 +1,6 @@
-import { WixClient } from "@/context/wixContext";
-import { currentCart } from "@wix/ecom";
 import { create } from "zustand";
+import { currentCart } from "@wix/ecom";
+import { WixClient } from "@/context/wixContext";
 
 type CartState = {
   cart: currentCart.Cart;
@@ -21,18 +21,19 @@ export const useCartStore = create<CartState>((set) => ({
   isLoading: true,
   counter: 0,
   getCart: async (wixClient) => {
-    const cart = await wixClient.currentCart.getCurrentCart();
     try {
+      const cart = await wixClient.currentCart.getCurrentCart();
       set({
         cart: cart || [],
         isLoading: false,
-        counter: cart.lineItems.length || 0,
+        counter: cart?.lineItems.length || 0,
       });
-    } catch (error) {}
+    } catch (err) {
+      set((prev) => ({ ...prev, isLoading: false }));
+    }
   },
   addItem: async (wixClient, productId, variantId, quantity) => {
     set((state) => ({ ...state, isLoading: true }));
-
     const response = await wixClient.currentCart.addToCurrentCart({
       lineItems: [
         {
@@ -52,10 +53,8 @@ export const useCartStore = create<CartState>((set) => ({
       isLoading: false,
     });
   },
-
   removeItem: async (wixClient, itemId) => {
     set((state) => ({ ...state, isLoading: true }));
-
     const response = await wixClient.currentCart.removeLineItemsFromCurrentCart(
       [itemId]
     );
