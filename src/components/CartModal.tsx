@@ -9,6 +9,11 @@ function CartModal() {
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem } = useCartStore();
 
+  // Calculate the subtotal manually
+  const subtotal = cart.lineItems?.reduce((total, item) => {
+    return total + (Number(item.price?.amount) || 0) * (item.quantity || 1);
+  }, 0);
+
   return (
     <div className="w-max absolute top-12 right-0 flex flex-col gap-6 p-4 rounded-md shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20 bg-white">
       {isLoading ? (
@@ -39,7 +44,7 @@ function CartModal() {
                 <div className="flex flex-col justify-between w-full">
                   {/* TOP */}
                   <div>
-                    {/* TITTLE */}
+                    {/* TITLE */}
                     <div className="flex items-center justify-between gap-8">
                       <h3 className="font-semibold">
                         {item.productName?.original}
@@ -47,19 +52,19 @@ function CartModal() {
                       <div className="p-1 bg-gray-50 rounded-sm flex items-center gap-1">
                         {item.quantity && item.quantity > 1 && (
                           <div className="text-gray-400 text-xs">
-                            {item.quantity} x{" "}
+                            {item.quantity} x
                           </div>
                         )}
                         {item.price?.amount}
                         {cart.currency}
                       </div>
                     </div>
-                    {/* DESCR */}
+                    {/* DESCRIPTION */}
                     <div className="text-sm text-gray-500">
                       {item.availability?.status}
                     </div>
                   </div>
-                  {/* BUTTOM */}
+                  {/* BOTTOM */}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Qty. {item.quantity}</span>
                     <span
@@ -73,12 +78,12 @@ function CartModal() {
               </div>
             ))}
           </div>
-          {/* BUTTOM */}
+          {/* BOTTOM */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between font-semibold">
               <span>Subtotal</span>
               <span>
-                {cart.subtotal.amount}
+                {subtotal}
                 {cart.currency}
               </span>
             </div>
